@@ -5,19 +5,16 @@
 
 ;; Math
 
-(defn -main
-  "I don't do a whole lot ... yet."
-  [& args]
-  (println "I am a little teapot!"))
-(println "Cleanliness is the next godliness")
 
 (defn discrete-metric [x y] (if (= x y) 0 1))
+
+;; Euclidean metric in one dimension ie absolute value
 (defn euclidean-metric [x y] (Math/abs (- x y)))
 
 
 (defn metric [f x y]
   "f = (f_1,...f_n), x = (x_1,...,x_n), y = (y_1,...,y_n)
-   metric(f,x,y) = sum( f_i(x_i,y_i))  "
+   metric(f,x,y) = sum( f_i(x_i,y_i)) f_i is a distance function  "
   (reduce + (map #(%1 %2 %3) f x y)))
 
 
@@ -51,6 +48,7 @@
 
 (def hongos-path "./resources/mushrooms.csv")
 
+;; I took this one from https://towardsdatascience.com/machine-learning-clojure-xgboost-clj-boost-e0d1339df1e1
 (defn demo-reader [path]
   (with-open [reader (io/reader path)]
     (doall (csv/read-csv reader))))
@@ -58,12 +56,9 @@
 
 (defn make-table [data]
   "data is the result of applying demo-reader to some csv file where the
-   first row are the name of the categories, the result is row turned into
-   hashmaps which allows indexation, additionally it adds a num column"
+   first row contains the name of the categories, the result is row turned into
+   hashmaps which allows indexation"
   (map #(zipmap (first data) %1) (rest data)))
-
-(defn set-index [data]
-  (zipmap (range) data))
 
 
 (defn select-values [map ks]
@@ -75,25 +70,6 @@
   (map #(select-values %1 ks) coll))
 
 
-(defn prueba1 [t]
-  "t is a hashmap with the key being a number and the value a list of values from important features including class, we separeta keys
-   from values so we can operate with them better"
-  (let [k (keys t)
-        clase (map first (vals t))
-        features (map rest (vals t))]
-    (zipmap k features)))
-
-(defn sort-result [result] (reverse 
-  (into (sorted-map-by (fn [key1 key2]
-                          (compare [(get result key2) key2]
-                                  [(get result key1) key1]))) result)))
-
-(defn prueba2 [t]
-  "Almost the same as prueba1 but returns {k [class (features)],...}"
-  (let [k (keys t)
-        clase (map first (vals t))
-        features (map rest (vals t))]
-    (zipmap k (map vector clase features))))
 
 (defn separar [coll]
   "coll es resultado de properties-interest"
